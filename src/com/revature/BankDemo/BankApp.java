@@ -1,4 +1,4 @@
-package com.revature;
+package com.revature.BankDemo;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,7 +11,9 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Scanner;
 
-//public class BankApp implements DaoOfBiable {
+import com.revature.BankDemo.model.Customers;
+
+//public class BankApp {
 public class BankApp {    
 
     private static Hashtable<String,String> customer;
@@ -22,6 +24,8 @@ public class BankApp {
     private static boolean isPassword = false;
 
     public static void main(String[] args) {
+
+        
 
         File [] bankFiles = findAllFilesIn("bunk"); // get all bank related files
 
@@ -91,14 +95,25 @@ public class BankApp {
                             }
                             boolean validatingCustomersInfo = true;
                             while (validatingCustomersInfo) {
-                                if (isUsername && isPassword) {
+                                if (isUsername && isPassword) { // successful log in
                                     System.out.println("Hooray, you're a customer....");
+                                    System.out.println();
+                                    // add more stuff here
+                                    System.out.println("What would you like to do: ");
+                                    System.out.println();
+                                    System.out.println("  1. Check your account");
+                                    System.out.println("  2. Open an account");
+                                    System.out.println("Press 1 or 2 to proceed:");
+                                    userInput = sc.nextLine();
+                                    
+
                                     validatingCustomersInfo = false;
                                     isloggingIn = false;
                                 } else {
                                     if (!isUsername) {
                                         System.out.println("Please re-enter username: ");
-                                        cusUsername = sc.nextLine();           
+                                        cusUsername = sc.nextLine();  
+                                        username = customer.keys();          
                                         for (;username.hasMoreElements();) {
                                             if (cusUsername.equals(username.nextElement())) {
                                                 isUsername = true;
@@ -109,11 +124,9 @@ public class BankApp {
                                     if (!isPassword) {
                                         System.out.println("Please re-enter password: ");
                                         cusPassword = sc.nextLine();  
-                                        System.out.println("password.hasMoreElement(): "+password.hasMoreElements());
-                                        System.out.println("password.hasMoreElement(): "+password.hasMoreElements());
+                                        password = customer.elements();
                                         for (;password.hasMoreElements();) {
                                             if (cusPassword.equals(password.nextElement())) {
-                                                System.out.println("Password is confirmed...");
                                                 isPassword = true;
                                                 break;
                                             }                                 

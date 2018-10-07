@@ -1,9 +1,9 @@
-package com.revature;
+package com.revature.BankDemo.model;
 
 import java.util.Hashtable;
 import java.io.Serializable;
 
-class Customers implements Serializable {
+public class Customers implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
