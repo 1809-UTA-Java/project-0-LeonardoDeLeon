@@ -84,8 +84,8 @@ public class BankinApp {
                             }
                             
                             if (isPassword) {
-                                isloggingIn = false; // make sure to end the inner while loop
-                                checkingUser = false; // make sure to end the outer loop
+                                isloggingIn = false; // end the inner while loop
+                                checkingUser = false; // end the outer loop
                                 System.out.println("Hooray, you're a customer....");
                                 System.out.println();
                                 // add more stuff here
@@ -132,36 +132,62 @@ public class BankinApp {
                         for (BankUsers bu: buList) {
                             if (usernameInput.equals(bu.getUserName())) {
                                 isUsernameExist = true;
-                               
                                 break; // proceed to password check
                             }         
                         }
+                        
+                        int cnt = 0; // start counter to stop creating username tries is 3 attempts
+                        boolean isStillMatching = false;                           
                         while (isUsernameExist) {
-                            System.out.println("Looks like that username is taken, please choose another one: ");
-                            usernameInput = sc.nextLine();
-                            boolean isStillMatching = false;
+                            if (cnt == 0) {
+                                System.out.println("Looks like that username is taken, please choose another one: ");
+                                usernameInput = sc.nextLine();
+                            }
+                            cnt++; 
+                            
+                            // check username against existing one
                             for (BankUsers bu: buList) {
                                 if (usernameInput.equals(bu.getUserName())) {
                                     isStillMatching = true;
-                                    
-                                    break; // proceed 
+                                    break; // proceed to prompting user for a unique username 
                                 }                                                                     
                             }
-                            if (isStillMatching) {
-                                System.out.println("Still taken, please choose another one: ");
-                                usernameInput = sc.nextLine();
-                            } else {
+                                                        
+                            if (isStillMatching) { // re-prompt user for username
+                                if (cnt == 1){
+                                    System.out.println("Still taken, please choose another one: ");
+                                    usernameInput = sc.nextLine();
+                                }
+  
+                                if (cnt == 2){
+                                    System.out.println("That's also taken, try again: ");
+                                    usernameInput = sc.nextLine();
+                                }
+
+                                if (cnt == 3) { 
+                                    System.out.println("Looks like you are not having any luck");
+                                    System.out.println("Try again next time!");
+                                    isUsernameExist = false; // exit out after 3  more tries
+                                } 
+                                isStillMatching = false; // reset for the next check                                                                
+                                
+                            } else { // looks like username finally made the cut
                                 isUsernameExist = false;
                             }
                         }
 
-                        System.out.println("Now create a password: ");
-                        String passwordInput = sc.nextLine();
+                        // have user create a password to complete registration
+                        if (!isStillMatching) { 
+                            System.out.println("Now create a password: ");
+                            String passwordInput = sc.nextLine();
+                            
+                            // call stored procedure that triggers a sequence 
+                            bad.registerNewUser(usernameInput,passwordInput);
+                            System.out.println("You have registered successfully");
+                        }
 
-                        bad.registerNewUser(usernameInput,passwordInput);
-                        System.out.println("You have registered successfully");
-                        isloggingIn = false;
-                        checkingUser = false;
+                        isloggingIn = false; // exit out of the logging stage
+                        checkingUser = false; // exit out of Customer screen
                     } else { // user did not enter 1 or 2
                         System.out.println("Please enter 1 or 2: ");
                         userInput = sc.nextLine();
