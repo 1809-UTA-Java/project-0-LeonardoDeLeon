@@ -19,20 +19,16 @@ import com.revature.BankDemo.repository.BankAppDao;
 public class BankinApp {
 	public static void main(String[] args) {
 
+        int userId;
         BankAppDao bad = new BankAppDao();
         List<BankUsers> buList = bad.getBankUsersSp();
-
-        // for (BankUsers bu: buList) {
-        //     System.out.println(bu.toString());
-        // }
         
         // List<BankAccounts> baList = bad.getBankAccounts();
 
         // for (BankAccounts ba: baList) {
         //     System.out.println(ba.toString());
         // }
-
-        
+    
         Scanner sc = new Scanner(System.in);
         System.out.println("--------------------------------------------------");
         System.out.println("Welcome to the Inter-Galactic Bank of the Universe");
@@ -79,15 +75,17 @@ public class BankinApp {
                             userInput = sc.nextLine();
                             for (BankUsers bu: buList) {
                                 if (userInput.equals(bu.getPassword())) {
-                                    isPassword = true;                                    
+                                    isPassword = true; 
+                                    userId = bu.getId();
+                                    System.out.println("userId = "+userId);                                   
                                     System.out.println(userInput+" = "+bu.getPassword());
                                     break; // password verified proceed to the next step
                                 }         
                             }
                             
                             if (isPassword) {
-                                isloggingIn = false;
-                                checkingUser = false; 
+                                isloggingIn = false; // make sure to end the inner while loop
+                                checkingUser = false; // make sure to end the outer loop
                                 System.out.println("Hooray, you're a customer....");
                                 System.out.println();
                                 // add more stuff here
@@ -97,6 +95,22 @@ public class BankinApp {
                                 System.out.println("  2. Open an account");
                                 System.out.println("Press 1 or 2 to proceed:");
                                 userInput = sc.nextLine();
+
+                                boolean isCheckingAccount = true;
+
+                                while (isCheckingAccount) {
+                                    if (userInput.equals("1")) {
+
+                                        System.out.println("Welcome back: ");
+                                        isCheckingAccount = false;
+                                    } else if (userInput.equals("2")) {
+                                        System.out.println("Nice... opening an account...");
+                                        isCheckingAccount = false;
+                                    } else {
+                                        System.out.println("Please press 1 or 2 only: ");
+                                    }
+                                }
+
                             } else {
                                 // reset the flag to allow user to retry
                                 isPassword = false;
@@ -113,10 +127,38 @@ public class BankinApp {
                                                                    
                     } else if (userInput.equals("2")) { // user registers a new account
                         System.out.println("Wise choice... Please create a username: ");
-                        userInput = sc.nextLine();
-                        System.out.println("Now create a password: ");
-                        userInput = sc.nextLine();
+                        String usernameInput = sc.nextLine();
+                        boolean isUsernameExist =false;
+                        for (BankUsers bu: buList) {
+                            if (usernameInput.equals(bu.getUserName())) {
+                                isUsernameExist = true;
+                               
+                                break; // proceed to password check
+                            }         
+                        }
+                        while (isUsernameExist) {
+                            System.out.println("Looks like that username is taken, please choose another one: ");
+                            usernameInput = sc.nextLine();
+                            boolean isStillMatching = false;
+                            for (BankUsers bu: buList) {
+                                if (usernameInput.equals(bu.getUserName())) {
+                                    isStillMatching = true;
+                                    
+                                    break; // proceed 
+                                }                                                                     
+                            }
+                            if (isStillMatching) {
+                                System.out.println("Still taken, please choose another one: ");
+                                usernameInput = sc.nextLine();
+                            } else {
+                                isUsernameExist = false;
+                            }
+                        }
 
+                        System.out.println("Now create a password: ");
+                        String passwordInput = sc.nextLine();
+
+                        bad.registerNewUser(usernameInput,passwordInput);
                         System.out.println("You have registered successfully");
                         isloggingIn = false;
                         checkingUser = false;

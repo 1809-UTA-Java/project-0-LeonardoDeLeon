@@ -11,7 +11,6 @@ import java.util.List;
 
 import com.revature.BankDemo.model.BankAccounts;
 import com.revature.BankDemo.model.BankUsers;
-import com.revature.BankDemo.model.Customers;
 import com.revature.BankDemo.util.DbConnUtil;
 
 import oracle.jdbc.internal.OracleTypes;
@@ -115,4 +114,26 @@ public class BankAppDao {
 
 		return bankUsers;
 	}	
+
+	public void registerNewUser(String username, String password) {
+		
+		CallableStatement cs = null;
+		
+		try(Connection conn = DbConnUtil.getDbConnect()) {
+			String sql = "{CALL REGISTER_NEW_USER_SP(?, ?)}";
+			cs = conn.prepareCall(sql);
+			cs.setString(1, username);
+			cs.setString(2, password);
+			
+			cs.execute();
+			cs.close();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	public static void main (String [] args) {
+		BankAppDao bad = new BankAppDao();
+		bad.registerNewUser("newUser","newPasword");
+	}
 }
