@@ -19,7 +19,8 @@ import com.revature.BankDemo.repository.BankAppDao;
 public class BankinApp {
 	public static void main(String[] args) {
 
-        int userId;
+        int userId = 0;
+        String username = "";
         BankAppDao bad = new BankAppDao();
         List<BankUsers> buList = bad.getBankUsersSp();
         
@@ -77,7 +78,8 @@ public class BankinApp {
                                 if (userInput.equals(bu.getPassword())) {
                                     isPassword = true; 
                                     userId = bu.getId();
-                                    System.out.println("userId = "+userId);                                   
+                                    username = bu.getUserName();
+                                    System.out.println("userId = "+userId+" username = "+username);                                   
                                     System.out.println(userInput+" = "+bu.getPassword());
                                     break; // password verified proceed to the next step
                                 }         
@@ -86,26 +88,55 @@ public class BankinApp {
                             if (isPassword) {
                                 isloggingIn = false; // end the inner while loop
                                 checkingUser = false; // end the outer loop
-                                System.out.println("Hooray, you're a customer....");
+                                System.out.println("Welcome back "+username);
                                 System.out.println();
                                 // add more stuff here
                                 System.out.println("What would you like to do: ");
                                 System.out.println();
-                                System.out.println("  1. Check your account");
-                                System.out.println("  2. Open an account");
+                                // retrieve customer's account
+                                System.out.println("  1. View your account");
+                                System.out.println("  2. Create or open a new account");
                                 System.out.println("Press 1 or 2 to proceed:");
                                 userInput = sc.nextLine();
 
-                                boolean isCheckingAccount = true;
+                                boolean isViewingAccount = true;
 
-                                while (isCheckingAccount) {
+                                while (isViewingAccount) {
                                     if (userInput.equals("1")) {
 
                                         System.out.println("Welcome back: ");
-                                        isCheckingAccount = false;
+                                        isViewingAccount = false;
                                     } else if (userInput.equals("2")) {
-                                        System.out.println("Nice... opening an account...");
-                                        isCheckingAccount = false;
+                                        System.out.println("To open a new account, a minimum deposit of $1 is required.");
+                                        System.out.println("To make it easier, please select from the following: ");
+                                        System.out.println();
+                                        System.out.println("   1. Press 1 for $1");
+                                        System.out.println("   2. Press 2 for $100");
+                                        System.out.println("   3. Press 3 for $1000");
+                                        System.out.println();
+                                        System.out.println("Please select the amount to deposit: ");
+                                        userInput = sc.nextLine();
+
+                                        boolean inputtingDeposit = true;
+                                        while (inputtingDeposit) {
+                                            if (userInput.equals("1")) {
+                                                bad.submitApplication(userId, 1);
+                                                inputtingDeposit = false;
+                                            } else if(userInput.equals("2")) {
+                                                bad.submitApplication(userId, 100);
+                                                inputtingDeposit = false;
+                                            } else if(userInput.equals("3")) {
+                                                bad.submitApplication(userId, 1000);
+                                                inputtingDeposit = false;
+                                            } else {
+                                                System.out.println("You did not enter 1, 2 or 3. Please try again");                                                
+                                                userInput = sc.nextLine();
+                                            }
+                                        }
+                                        System.out.println("Thank you for submitting an application.");
+                                        System.out.println("Your application is being processed.");
+                                        System.out.println("It may take up to 3 to 5 business days.");
+                                        isViewingAccount = false;
                                     } else {
                                         System.out.println("Please press 1 or 2 only: ");
                                     }
@@ -136,7 +167,7 @@ public class BankinApp {
                             }         
                         }
                         
-                        int cnt = 0; // start counter to stop creating username tries is 3 attempts
+                        int cnt = 0; // start counter to stop creating username tries in 3 attempts
                         boolean isStillMatching = false;                           
                         while (isUsernameExist) {
                             if (cnt == 0) {

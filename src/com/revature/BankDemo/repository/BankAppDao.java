@@ -132,6 +132,22 @@ public class BankAppDao {
 		}
 	}
 
+	public void submitApplication(int userId, int deposit) {
+		
+		CallableStatement cs = null;
+		
+		try(Connection conn = DbConnUtil.getDbConnect()) {
+			String sql = "{CALL SUBMIT_APPLICATION_SP(?,?)}";
+			cs = conn.prepareCall(sql);
+			cs.setInt(1, userId);			
+			cs.setInt(2, deposit);
+			cs.execute();
+			cs.close();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
 	public static void main (String [] args) {
 		BankAppDao bad = new BankAppDao();
 		bad.registerNewUser("newUser","newPasword");
