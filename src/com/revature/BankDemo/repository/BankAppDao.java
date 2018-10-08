@@ -1,6 +1,5 @@
 package com.revature.BankDemo.repository;
 
-
 import java.io.IOException;
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -10,6 +9,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.revature.BankDemo.model.BankAccounts;
 import com.revature.BankDemo.model.BankUsers;
 import com.revature.BankDemo.model.Customers;
 import com.revature.BankDemo.util.DbConnUtil;
@@ -18,7 +18,7 @@ import oracle.jdbc.internal.OracleTypes;
 
 public class BankAppDao {
 
-	public List<BankUsers> getCustomers() {
+	public List<BankUsers> getBankUsers() {
         PreparedStatement ps = null;
         
 		BankUsers bu = null;
@@ -30,10 +30,10 @@ public class BankAppDao {
 			ResultSet rs = ps.executeQuery();
 			
 			while (rs.next()) {
-				int uid = rs.getInt("u_id");
+				int uid = rs.getInt("user_id");
 				String username = rs.getString("username");
-				String userPassword = rs.getString("user_password");
-				int utId = rs.getInt("ut_id");
+				String userPassword = rs.getString("password");
+				int utId = rs.getInt("user_type_id");
 				
 				bu = new BankUsers(uid, username, userPassword, utId);
 				bankUsers.add(bu);
@@ -50,58 +50,69 @@ public class BankAppDao {
 		return bankUsers;
 	}
 
+	public List<BankAccounts> getBankAccounts() {
+        PreparedStatement ps = null;
+        
+		BankAccounts ba = null;
+		List<BankAccounts> bankAccounts = new ArrayList<>();
+		
+		try(Connection conn = DbConnUtil.getDbConnect()) {
+			String sql = "SELECT * FROM ACCOUNT";
+			ps = conn.prepareStatement(sql);
+			ResultSet rs = ps.executeQuery();
+			
+			while (rs.next()) {
+				int accountId = rs.getInt("account_id");
+				int accountTypeId = rs.getInt("account_type_id");
+				int accountStatusId = rs.getInt("account_status_id");
+                int userId = rs.getInt("user_id");
+                int balance = rs.getInt("account_balance");
+				
+                ba = new BankAccounts(accountId, accountTypeId, accountStatusId, userId, balance);
+				bankAccounts.add(ba);
+			}
+			
+			rs.close();
+			ps.close();
+		} catch (SQLException ex) {
+			ex.getMessage();
+		} catch (IOException ex) {
+			ex.getMessage();
+		}
+		
+		return bankAccounts;
+	}
 
+	public List<BankUsers> getBankUsersSp() {
+		CallableStatement cs = null;
+		
+		BankUsers bu = null;
+		List<BankUsers> bankUsers = new ArrayList<>();
 
-    public static void main(String[] args) {
+		try(Connection conn = DbConnUtil.getDbConnect()) {
+			String sql = "{ CALL GET_ALL_FROM_USERS(?) }";
+			cs = conn.prepareCall(sql);
+			cs.registerOutParameter(1, OracleTypes.CURSOR);
+			
+			cs.execute();
+			
+			ResultSet rs = (ResultSet) cs.getObject(1);
+			while(rs.next()) {
+				int uid = rs.getInt("user_id");
+				String username = rs.getString("username");
+				String userPassword = rs.getString("password");
+				int utId = rs.getInt("user_type_id");
+				
+				bu = new BankUsers(uid, username, userPassword, utId);
+				bankUsers.add(bu);
+			}
+			
+			cs.close();
+			rs.close();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 
-        BankAppDao bad = new BankAppDao();
-        List<BankUsers> buList = bad.getCustomers();
-
-        for (BankUsers b: buList) {
-            System.out.println(b.toString());
-        }
-
-        //Declare Connection and Statement objects
-        /*
-        Connection myConnection = null;
-        Statement myStatement = null;
-
-        try {
-            //Register the driver
-            DriverManager.registerDriver(new oracle.jdbc.OracleDriver());
-            System.out.println("right before myConn");
-            //Configure Connection
-            myConnection = DriverManager.getConnection(
-                "jdbc:oracle:thin:@192.168.56.105:1521:xe", 
-                "bank", 
-                "password13");
-            if (myConnection != null) {
-                System.out.print("Conn Successful");
-            } else {
-                System.out.println("Conn Failed...");
-            }
-            //Create Statement
-            myStatement = myConnection.createStatement();
-            System.out.println("b4 execute....");
-            //myStatement.execute("INSERT INTO USERS (u_id, username, user_password, ut_id) VALUES (8,'duckiduc', 'duc123', 3)");
-            System.out.println("after execute....");
-            //Create a ResultSet object for storing data from a SELECT
-            ResultSet users = myStatement.executeQuery("SELECT username FROM USERS");
-
-            while(users.next()) {
-                //System.out.println(users.getInt("u_id"));
-                System.out.println(users.getString("username"));
-                //System.out.println(users.getString("user_password"));
-                //System.out.println(users.getInt("ut_id"));
-                System.out.println();
-            }
-
-            myStatement.close();
-            myConnection.close();
-        } catch (SQLException ex) {
-            ex.getMessage();
-        } */
-
-
-    }
+		return bankUsers;
+	}	
 }

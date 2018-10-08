@@ -1,14 +1,14 @@
 package com.revature.BankDemo.model;
 
 public class BankUsers {
-	private int uid;
+	private int userId;
 	private String username;
 	private String password;
 	private int userType;
 
-	public BankUsers(int uid, String username, String password, int userType) {
+	public BankUsers(int userId, String username, String password, int userType) {
 		super();
-		this.uid = uid;
+		this.userId = userId;
 		this.username = username;
 		this.password = password;
 		this.userType = userType;
@@ -16,15 +16,14 @@ public class BankUsers {
 
 	public BankUsers() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public int getId() {
-		return uid;
+		return userId;
 	}
 
-	public void setId(int uid) {
-		this.uid = uid;
+	public void setId(int userId) {
+		this.userId = userId;
 	}
 
 	public String getUserName() {
@@ -53,7 +52,7 @@ public class BankUsers {
 
 	@Override
 	public String toString() {
-		return "BankUsers [uid=" + uid + ", username=" + username + ", password=" + password + ", userType=" + userType + "]";
+		return "BankUsers [userId=" + userId + ", username=" + username + ", password=" + password + ", userType=" + userType + "]";
 	}
 
 }
