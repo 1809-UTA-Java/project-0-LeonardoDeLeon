@@ -179,6 +179,22 @@ public class BankAppDao {
 			ex.printStackTrace();
 		}
 	}
+
+	public void createUserAccount(int userId, int accountId) {
+		
+		CallableStatement cs = null;
+		
+		try(Connection conn = DbConnUtil.getDbConnect()) {
+			String sql = "{CALL CREATE_USER_ACCOUNT_SP(?,?)}";
+			cs = conn.prepareCall(sql);
+			cs.setInt(1, userId);			
+			cs.setInt(2, accountId);
+			cs.execute();
+			cs.close();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}	
 	public static void main (String [] args) {
 		BankAppDao bad = new BankAppDao();
 		bad.registerNewUser("newUser","newPasword");

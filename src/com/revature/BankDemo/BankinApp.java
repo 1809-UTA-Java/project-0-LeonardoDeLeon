@@ -245,18 +245,35 @@ public class BankinApp {
 
                                         boolean inputtingDeposit = true;
                                         while (inputtingDeposit) {
+                                            boolean isCreatingUserAccount = false;
                                             if (userInput.equals("1")) {
                                                 bad.submitApplication(userId, 1);
+                                                isCreatingUserAccount = true;
                                                 inputtingDeposit = false;
                                             } else if(userInput.equals("2")) {
                                                 bad.submitApplication(userId, 100);
+                                                isCreatingUserAccount = true;
                                                 inputtingDeposit = false;
                                             } else if(userInput.equals("3")) {
                                                 bad.submitApplication(userId, 1000);
+                                                isCreatingUserAccount = true;
                                                 inputtingDeposit = false;
                                             } else {
                                                 System.out.println("You did not enter 1, 2 or 3. Please try again");                                                
                                                 userInput = sc.nextLine();
+                                            }
+                                            if (isCreatingUserAccount) {
+                                                List<BankAccounts> newBaList = bad.getBankAccounts();  
+                                                for (BankAccounts ba: newBaList) {
+                                                    if (userId == ba.getUserId()) {
+                                                        balance = ba.getAmount();
+                                                        accountId = ba.getAccountId();
+                                                        break;
+                                                    }
+                                                }
+                                                
+                                                bad.addTransactionRecord(accountId, balance);
+                                                bad.createUserAccount(userId, accountId);
                                             }
                                         }
                                         System.out.println("Thank you for submitting an application.");
@@ -355,7 +372,9 @@ public class BankinApp {
 
                 
             } else if (userInput.equals("2")) {
-                System.out.println("Get to work Employee...");
+                System.out.println("Get back to work... Employee 5");
+
+                
                 checkingUser = false;
             } else if (userInput.equals("3")) {
                 System.out.println("Your coffee and breakfast is on its way...");
