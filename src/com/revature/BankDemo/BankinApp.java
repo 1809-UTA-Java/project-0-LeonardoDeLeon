@@ -140,7 +140,42 @@ public class BankinApp {
                                                 bad.addTransactionRecord(accountId,Integer.parseInt(userInput));
                                                 System.out.println(fmt.format(Integer.parseInt(userInput))+" has been added to your account.");
                                                 isUserTransaction = false;
-                                            } 
+                                            } else if (userInput.equals("2")) {
+                                                System.out.println();
+                                                System.out.println("Please enter the amount to withdraw: ");
+                                                userInput = sc.nextLine();
+                                                
+                                                boolean isWithdrawing = true;
+                                                int withdrawalAmount;
+                                                while (isWithdrawing) {
+                                                    try {
+                                                        withdrawalAmount = Integer.parseInt(userInput);
+                                                        if (withdrawalAmount > 0) {
+                                                           
+                                                            if (balance-withdrawalAmount > 0) {
+                                                                bad.updateAccountBalance(accountId,balance-withdrawalAmount);
+                                                                bad.addTransactionRecord(accountId,withdrawalAmount);
+                                                                System.out.println(fmt.format(withdrawalAmount)+" has been withdrawn from your account.");
+                                                                isUserTransaction = false;
+                                                                isWithdrawing = false;
+                                                            } else {
+                                                                System.out.println("Please enter amount less than the balance");
+                                                                userInput = sc.nextLine();
+                                                            }
+                                                        } else {
+                                                            System.out.println("Please enter amount greater than 0:");
+                                                            userInput = sc.nextLine();
+                                                        }
+                                                    }catch (NumberFormatException e) {
+                                                        System.out.println("Input is not a valid integer");
+                                                        System.out.println("Please enter numbers ONLY: ");
+                                                        userInput = sc.nextLine();
+                                                    }
+                                                    
+                                                }
+
+
+                                            }
                                         }
                                         
                                         isViewingAccount = false;
