@@ -222,6 +222,12 @@ public class BankinApp {
                                                     
                                                 }
                                                 isUserTransaction = false;
+                                            } else if (userInput.equals("4")) {
+                                                System.out.println("Thank you for visiting Galaxy Bank. Bye now!");
+                                                isUserTransaction = false;
+                                            } else {
+                                                System.out.println("Please enter 1, 2 ,3 or 4");
+                                                userInput = sc.nextLine();
                                             }
                                         }
                                         
