@@ -24,6 +24,7 @@ public class BankinApp {
         String username = "";
         int balance = 0;
         int accountId = 0;
+        int existingBalance = 0;
         BankAppDao bad = new BankAppDao();
         List<BankUsers> buList = bad.getBankUsersSp();
         List<BankAccounts> baList = bad.getBankAccounts();
@@ -166,8 +167,7 @@ public class BankinApp {
                                                             System.out.println("Please enter amount greater than 0:");
                                                             userInput = sc.nextLine();
                                                         }
-                                                    }catch (NumberFormatException e) {
-                                                        System.out.println("Input is not a valid integer");
+                                                    } catch (NumberFormatException e) {
                                                         System.out.println("Please enter numbers ONLY: ");
                                                         userInput = sc.nextLine();
                                                     }
@@ -175,6 +175,53 @@ public class BankinApp {
                                                 }
 
 
+                                            } else if (userInput.equals("3")) {
+                                                String userInputToTransfer;
+                                                String userInputToTransferAccountId;
+                                                System.out.println();
+                                                System.out.println("Please enter the amount to transfer: ");
+                                                userInputToTransfer = sc.nextLine();
+                                                
+                                                boolean isTransferring = true;
+                                                int transferringAmount;
+                                                int transferringAccountId;
+                                                while (isTransferring) {
+                                                    try {
+                                                        transferringAmount = Integer.parseInt(userInputToTransfer.trim());
+                                                        
+                                                        if (transferringAmount > 0) {
+
+                                                            System.out.println("Now enter the account id to transfer to: ");
+                                                            userInputToTransferAccountId = sc.nextLine();
+                                                            transferringAccountId = Integer.parseInt(userInputToTransferAccountId.trim());
+                                                            for (BankAccounts ba: baList) {
+                                                                if (transferringAccountId == ba.getAccountId()) {                                                                    
+                                                                    existingBalance = ba.getAmount();                                                 
+                                                                }
+                                                            }
+                                                            if (balance-transferringAmount > 0) {
+                                                                bad.updateAccountBalance(accountId,balance-transferringAmount);
+                                                                bad.addTransactionRecord(accountId,transferringAmount);
+                                                                bad.updateAccountBalance(transferringAccountId,existingBalance+transferringAmount);
+                                                                bad.addTransactionRecord(transferringAccountId,transferringAmount);                                                                
+                                                                System.out.println(fmt.format(transferringAmount)+" has been transferred from your account "+accountId+" to account "+transferringAccountId);
+                                                                isUserTransaction = false;
+                                                                isTransferring = false;
+                                                            } else {
+                                                                System.out.println("Please enter amount less than the balance");
+                                                                userInputToTransfer = sc.nextLine();
+                                                            }
+                                                        } else {
+                                                            System.out.println("Please enter amount greater than 0:");
+                                                            userInputToTransfer = sc.nextLine();
+                                                        }
+                                                    } catch (NumberFormatException e) {
+                                                        System.out.println("Please enter numbers ONLY: ");
+                                                        userInputToTransfer = sc.nextLine();
+                                                    }
+                                                    
+                                                }
+                                                isUserTransaction = false;
                                             }
                                         }
                                         
