@@ -148,6 +148,37 @@ public class BankAppDao {
 		}
 	}
 
+	public void updateAccountBalance(int accountId, int deposit) {
+		
+		CallableStatement cs = null;
+		
+		try(Connection conn = DbConnUtil.getDbConnect()) {
+			String sql = "{CALL UPDATE_ACCOUNT_BALANCE_SP(?,?)}";
+			cs = conn.prepareCall(sql);
+			cs.setInt(1, accountId);			
+			cs.setInt(2, deposit);
+			cs.execute();
+			cs.close();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	public void addTransactionRecord(int accountId, int deposit) {
+		
+		CallableStatement cs = null;
+		
+		try(Connection conn = DbConnUtil.getDbConnect()) {
+			String sql = "{CALL ADD_TRANSACTION_RECORD_SP(?,?)}";
+			cs = conn.prepareCall(sql);
+			cs.setInt(1, accountId);			
+			cs.setInt(2, deposit);
+			cs.execute();
+			cs.close();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
 	public static void main (String [] args) {
 		BankAppDao bad = new BankAppDao();
 		bad.registerNewUser("newUser","newPasword");

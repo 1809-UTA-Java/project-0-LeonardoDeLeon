@@ -11,6 +11,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Scanner;
+import java.text.NumberFormat;
 
 import com.revature.BankDemo.model.BankAccounts;
 import com.revature.BankDemo.model.BankUsers;
@@ -21,19 +22,18 @@ public class BankinApp {
 
         int userId = 0;
         String username = "";
+        int balance = 0;
+        int accountId = 0;
         BankAppDao bad = new BankAppDao();
         List<BankUsers> buList = bad.getBankUsersSp();
+        List<BankAccounts> baList = bad.getBankAccounts();
+   
+        NumberFormat fmt = NumberFormat.getCurrencyInstance();
         
-        // List<BankAccounts> baList = bad.getBankAccounts();
-
-        // for (BankAccounts ba: baList) {
-        //     System.out.println(ba.toString());
-        // }
-    
         Scanner sc = new Scanner(System.in);
         System.out.println("--------------------------------------------------");
-        System.out.println("Welcome to the Inter-Galactic Bank of the Universe");
-        System.out.println("It's the only bank your will ever need");
+        System.out.println("Welcome to Galaxy Bank");
+        System.out.println("The only bank your will ever need");
         System.out.println("--------------------------------------------------");
         System.out.println();
         System.out.println("Press 1 for Customer");
@@ -64,7 +64,7 @@ public class BankinApp {
                         for (BankUsers bu: buList) {
                             if (userInput.equals(bu.getUserName())) {
                                 isUsername = true;
-                                System.out.println(userInput+" = "+bu.getUserName());
+                                
                                 break; // proceed to password check
                             }         
                         }
@@ -79,8 +79,7 @@ public class BankinApp {
                                     isPassword = true; 
                                     userId = bu.getId();
                                     username = bu.getUserName();
-                                    System.out.println("userId = "+userId+" username = "+username);                                   
-                                    System.out.println(userInput+" = "+bu.getPassword());
+
                                     break; // password verified proceed to the next step
                                 }         
                             }
@@ -88,14 +87,15 @@ public class BankinApp {
                             if (isPassword) {
                                 isloggingIn = false; // end the inner while loop
                                 checkingUser = false; // end the outer loop
-                                System.out.println("Welcome back "+username);
+                                
                                 System.out.println();
                                 // add more stuff here
-                                System.out.println("What would you like to do: ");
+                                System.out.println("What would you like to do "+username+":");
                                 System.out.println();
                                 // retrieve customer's account
                                 System.out.println("  1. View your account");
                                 System.out.println("  2. Create or open a new account");
+                                System.out.println();
                                 System.out.println("Press 1 or 2 to proceed:");
                                 userInput = sc.nextLine();
 
@@ -104,15 +104,53 @@ public class BankinApp {
                                 while (isViewingAccount) {
                                     if (userInput.equals("1")) {
 
-                                        System.out.println("Welcome back: ");
+                                        System.out.println();
+                                        System.out.println("Here is the current detail of your account:");
+                                        System.out.println();
+
+                                        for (BankAccounts ba: baList) {
+                                            if (userId == ba.getUserId()) {
+                                                
+                                                balance = ba.getAmount();
+                                                accountId = ba.getAccountId();
+                                            }
+                                        }
+                                        System.out.println("  Account Id: "+accountId);
+                                        System.out.println("  Your current balance is "+ fmt.format(balance));
+
+                                        System.out.println();
+                                        System.out.println("What would you like to do?");
+                                        System.out.println();
+                                        System.out.println("  1. Deposit money");
+                                        System.out.println("  2. Withdraw money");
+                                        System.out.println("  3. Transfer money to another account");
+                                        System.out.println("  4. or Exit out of Galaxy Bank");
+                                        System.out.println();
+                                        System.out.println("Press 1, 2, 3 or 4 to proceed: ");
+                                        userInput = sc.next();
+
+                                        boolean isUserTransaction = true;
+                                        while (isUserTransaction) {
+                                            if (userInput.equals("1")) {
+                                                System.out.println();
+                                                System.out.println("Please enter the amount to deposit: ");
+                                                userInput = sc.next();
+
+                                                bad.updateAccountBalance(accountId,balance+Integer.parseInt(userInput));
+                                                bad.addTransactionRecord(accountId,Integer.parseInt(userInput));
+                                                System.out.println(fmt.format(Integer.parseInt(userInput))+" has been added to your account.");
+                                                isUserTransaction = false;
+                                            } 
+                                        }
+                                        
                                         isViewingAccount = false;
                                     } else if (userInput.equals("2")) {
                                         System.out.println("To open a new account, a minimum deposit of $1 is required.");
                                         System.out.println("To make it easier, please select from the following: ");
                                         System.out.println();
-                                        System.out.println("   1. Press 1 for $1");
-                                        System.out.println("   2. Press 2 for $100");
-                                        System.out.println("   3. Press 3 for $1000");
+                                        System.out.println("  1. Press 1 for $1");
+                                        System.out.println("  2. Press 2 for $100");
+                                        System.out.println("  3. Press 3 for $1000");
                                         System.out.println();
                                         System.out.println("Please select the amount to deposit: ");
                                         userInput = sc.nextLine();
@@ -157,7 +195,7 @@ public class BankinApp {
                         }
                                                                    
                     } else if (userInput.equals("2")) { // user registers a new account
-                        System.out.println("Wise choice... Please create a username: ");
+                        System.out.println("Please create a username: ");
                         String usernameInput = sc.nextLine();
                         boolean isUsernameExist =false;
                         for (BankUsers bu: buList) {
