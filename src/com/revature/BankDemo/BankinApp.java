@@ -585,7 +585,7 @@ public class BankinApp {
                                     transacting = false;
                                     isEmployeeTasking = false;
                                 } else if (userInput.equals("4")) {
-                                    System.out.println("Exiting out of the System");
+                                    System.out.println("Exiting the System");
                                     isEmployeeTasking = false;
                                     transacting = false;
                                 } else {
@@ -594,7 +594,66 @@ public class BankinApp {
                                 }
                             }
                         } else if(userInput.equals("2")) {
-                            // Approve or denying
+                            // Approve or denying all new application
+                            //bad.getAllNewAccount();
+
+                            System.out.println();
+                            System.out.println("List of new applicants:");
+                            System.out.println();
+                            for (BankAccounts ba: baList) {
+                                if (ba.getAccountStatusId() == 1) {
+                                    balance = ba.getAmount();
+                                    accountId = ba.getAccountId();
+                                    userId = ba.getUserId();
+                                    for (BankUsers bu: buList) {
+                                        if (userId == bu.getId()) {
+                                            username = bu.getUserName();
+                                            break;
+                                        }
+                                    }
+
+                                    System.out.println("Account Id: " + accountId + " ----- Username: " + username + " ----- Account balance: " + fmt.format(balance));
+                                }
+                            }
+                            System.out.println();
+                            System.out.println("Please select from the following course of action: ");
+                            System.out.println();
+                            System.out.println("  1. Approve,");
+                            System.out.println("  2. Deny");
+                            System.out.println("  3. Or exit");
+                            System.out.println();
+                            System.out.println("Please select 1, 2 or 3: ");
+                            userInput = sc.nextLine();
+                            System.out.println();
+                        
+                            boolean isAppOrDenying = true;
+                            while (isAppOrDenying) {
+                                if (userInput.equals("1")) {
+                                    //Approving
+                                    System.out.println("Enter an account id to approve:");
+                                    userInput = sc.nextLine();
+                                    accountId = Integer.parseInt(userInput);
+                                    System.out.println();
+                                    bad.approveAnApplicant(accountId);
+                                    System.out.println("Applicant is approved!");
+                                    isAppOrDenying = false;
+                                } else if (userInput.equals("2")) {
+                                    //Denying
+                                    System.out.println("Enter an account id to deny:");
+                                    userInput = sc.nextLine();
+                                    accountId = Integer.parseInt(userInput);
+                                    System.out.println();
+                                    bad.denyAnApplicant(accountId);
+                                    System.out.println("Application is denied!");
+                                    isAppOrDenying = false;
+                                } else if (userInput.equals("3")) {
+                                    //Exiting 
+                                    System.out.println("Exiting");
+                                    isAppOrDenying = false;
+                                } else {
+                                    System.out.println("Please enter 1, 2 or 3 ONLY");
+                                    userInput = sc.nextLine();                                }
+                             }
                             isEmployeeTasking = false;
                         } else if(userInput.equals("3")) {
                             System.out.println("Bye");

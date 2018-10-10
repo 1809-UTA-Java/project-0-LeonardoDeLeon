@@ -229,6 +229,36 @@ public class BankAppDao {
 
 		return bankUsersAccount;
 	}
+
+	public void approveAnApplicant(int accountId) {
+		
+		CallableStatement cs = null;
+		
+		try(Connection conn = DbConnUtil.getDbConnect()) {
+			String sql = "{CALL APPROVE_AN_APPLICANT_SP(?)}";
+			cs = conn.prepareCall(sql);
+			cs.setInt(1, accountId);
+			cs.execute();
+			cs.close();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	public void denyAnApplicant(int accountId) {
+		
+		CallableStatement cs = null;
+		
+		try(Connection conn = DbConnUtil.getDbConnect()) {
+			String sql = "{CALL DENY_AN_APPLICANT_SP(?)}";
+			cs = conn.prepareCall(sql);
+			cs.setInt(1, accountId);
+			cs.execute();
+			cs.close();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
 	public static void main (String [] args) {
 		BankAppDao bad = new BankAppDao();
 		bad.registerNewUser("newUser","newPasword");
