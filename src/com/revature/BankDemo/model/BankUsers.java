@@ -46,7 +46,7 @@ public class BankUsers {
 		return userType;
 	}
 
-	public void setLegs(int userType) {
+	public void setUserType(int userType) {
 		this.userType = userType;
 	}
 

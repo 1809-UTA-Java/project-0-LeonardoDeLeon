@@ -22,9 +22,12 @@ public class BankinApp {
 
         int userId = 0;
         String username = "";
+        String password = "";
         int balance = 0;
         int accountId = 0;
         int existingBalance = 0;
+        int userTypeId = 0;
+
         BankAppDao bad = new BankAppDao();
         List<BankUsers> buList = bad.getBankUsersSp();
         List<BankAccounts> baList = bad.getBankAccounts();
@@ -34,7 +37,7 @@ public class BankinApp {
         Scanner sc = new Scanner(System.in);
         System.out.println("--------------------------------------------------");
         System.out.println("Welcome to Galaxy Bank");
-        System.out.println("The only bank your will ever need");
+        System.out.println("The only bank you will ever need");
         System.out.println("--------------------------------------------------");
         System.out.println();
         System.out.println("Press 1 for Customer");
@@ -136,11 +139,16 @@ public class BankinApp {
                                                 System.out.println();
                                                 System.out.println("Please enter the amount to deposit: ");
                                                 userInput = sc.next();
-
-                                                bad.updateAccountBalance(accountId,balance+Integer.parseInt(userInput));
-                                                bad.addTransactionRecord(accountId,Integer.parseInt(userInput));
-                                                System.out.println(fmt.format(Integer.parseInt(userInput))+" has been added to your account.");
-                                                isUserTransaction = false;
+                                                try {
+                                                    bad.updateAccountBalance(accountId,balance+Integer.parseInt(userInput));
+                                                    bad.addTransactionRecord(accountId,Integer.parseInt(userInput));
+                                                    System.out.println(fmt.format(Integer.parseInt(userInput))+" has been added to your account.");
+                                                    isUserTransaction = false;
+                                                } catch (NumberFormatException e) {
+                                                    System.out.println("Please enter numbers ONLY: ");
+                                                    userInput = sc.nextLine();
+                                                } 
+                                                
                                             } else if (userInput.equals("2")) {
                                                 System.out.println();
                                                 System.out.println("Please enter the amount to withdraw: ");
@@ -170,11 +178,8 @@ public class BankinApp {
                                                     } catch (NumberFormatException e) {
                                                         System.out.println("Please enter numbers ONLY: ");
                                                         userInput = sc.nextLine();
-                                                    }
-                                                    
+                                                    }                                               
                                                 }
-
-
                                             } else if (userInput.equals("3")) {
                                                 String userInputToTransfer;
                                                 String userInputToTransferAccountId;
@@ -372,21 +377,219 @@ public class BankinApp {
 
                 
             } else if (userInput.equals("2")) {
-                System.out.println("Get back to work... Employee 5");
+                System.out.println("Galaxy Bank Employee System.  Please enter username to begin: ");
+                String employeeUsername = sc.nextLine();
+                System.out.println("Next, enter your password: ");
+                String employeePassword = sc.nextLine();
 
+                buList = bad.getBankUsersSp();
+                baList = bad.getBankAccounts();
+
+                // verify the employee
+                for (BankUsers bu: buList) {
+                    if (employeeUsername.equals(bu.getUserName())) {
+                        userTypeId = bu.getUserType();
+                        username = bu.getUserName();
+                        break; 
+                    }         
+                }
+
+                if (userTypeId == 2) { // employee user_type_id is 2
+
+                    System.out.println("Welcome back " + username);
+                    System.out.println();
+                    System.out.println("Please select your task: ");
+                    System.out.println();
+                    System.out.println("  1. Deposit/Withdrawal/Transfer");
+                    System.out.println("  2. Approve/Deny Application");
+                    System.out.println("  3. Or Exit out of the System");
+                    System.out.println();
+                    System.out.println("Please select 1, 2, or 3 to begin: ");
+                    userInput = sc.nextLine();
+
+                    boolean isEmployeeTasking = true;
+
+                    while (isEmployeeTasking) {
+
+                        if (userInput.equals("1")) {
+
+                            System.out.println("Prompt user for username: ");
+                            String usernameInput = sc.nextLine();
+
+                            System.out.println("Prompt user for their password: ");
+                            String passwordInput = sc.nextLine();
+
+                            for (BankUsers bu: buList) {
+                                if (usernameInput.equals(bu.getUserName())) {
+                                    userId = bu.getId();
+                                    username = bu.getUserName();
+                                    password = bu.getPassword();
+                                    break; // proceed
+                                }                                                                     
+                            }
+
+                            for (BankAccounts ba: baList) {
+                                if (userId == ba.getUserId()) {
+                                    balance = ba.getAmount();
+                                    accountId = ba.getAccountId();
+                                    break;
+                                }
+                            }
+                            System.out.println();
+                            System.out.println("   Username: "+ username +" --- User Id: "+ userId +" --- Password: "+password);
+                            System.out.println();
+                            System.out.println("   Account Id: "+ accountId +" --- Account Balance: "+ fmt.format(balance));
+                            System.out.println();
+
+                            System.out.println("Ask user/customer what they want to do next: ");
+                            System.out.println();
+                            System.out.println("   1. Deposit");
+                            System.out.println("   2. Withdrawal");
+                            System.out.println("   3. Transfer");
+                            System.out.println("   4. Or if they're done, exit");
+                            System.out.println();
+                            System.out.println("What would it be: ");
+                            userInput = sc.nextLine();
+
+                            boolean transacting = true; 
+                            while (transacting) {
+                                if (userInput.equals("1")) {
+                                    // deposit
+                                    System.out.println();
+                                    System.out.println("Please enter the amount to deposit: ");
+                                    userInput = sc.next();
+                                    try {
+                                        bad.updateAccountBalance(accountId,balance+Integer.parseInt(userInput));
+                                        bad.addTransactionRecord(accountId,Integer.parseInt(userInput));
+                                        System.out.println(fmt.format(Integer.parseInt(userInput))+" has been added to your account.");                                
+                                        isEmployeeTasking = false;
+                                        transacting = false;
+                                    } catch (NumberFormatException e) {
+                                        System.out.println("Please enter numbers ONLY: ");
+                                        userInput = sc.nextLine();
+                                    } 
+                                } else if (userInput.equals("2")) {
+                                    //withdrawal
+                                    System.out.println();
+                                    System.out.println("Please enter the amount to withdraw: ");
+                                    userInput = sc.nextLine();
+                                    
+                                    boolean isWithdrawing = true;
+                                    int withdrawalAmount;
+                                    while (isWithdrawing) {
+                                        try {
+                                            withdrawalAmount = Integer.parseInt(userInput);
+                                            if (withdrawalAmount > 0) {
+                                                
+                                                if (balance-withdrawalAmount > 0) {
+                                                    bad.updateAccountBalance(accountId,balance-withdrawalAmount);
+                                                    bad.addTransactionRecord(accountId,withdrawalAmount);
+                                                    System.out.println(fmt.format(withdrawalAmount)+" has been withdrawn from your account.");
+                                                    transacting = false;
+                                                    isWithdrawing = false;
+                                                    isEmployeeTasking = false;
+                                                } else {
+                                                    System.out.println("Please enter amount less than the balance");
+                                                    userInput = sc.nextLine();
+                                                }
+                                            } else {
+                                                System.out.println("Please enter amount greater than 0:");
+                                                userInput = sc.nextLine();
+                                            }
+                                        } catch (NumberFormatException e) {
+                                            System.out.println("Please enter numbers ONLY: ");
+                                            userInput = sc.nextLine();
+                                        }                                    
+                                    }
+                                    
+                                } else if (userInput.equals("3")) {
+                                    // transfer
+                                    System.out.println("Transferring");
+                                    String userInputToTransfer;
+                                    String userInputToTransferAccountId;
+                                    System.out.println();
+                                    System.out.println("Please enter the amount to transfer: ");
+                                    userInputToTransfer = sc.nextLine();
+                                    
+                                    boolean isTransferring = true;
+                                    int transferringAmount;
+                                    int transferringAccountId;
+                                    while (isTransferring) {
+                                        try {
+                                            transferringAmount = Integer.parseInt(userInputToTransfer.trim());
+                                            
+                                            if (transferringAmount > 0) {
+
+                                                System.out.println("Now enter the account id to transfer to: ");
+                                                userInputToTransferAccountId = sc.nextLine();
+                                                transferringAccountId = Integer.parseInt(userInputToTransferAccountId.trim());
+                                                for (BankAccounts ba: baList) {
+                                                    if (transferringAccountId == ba.getAccountId()) {                                                                    
+                                                        existingBalance = ba.getAmount();                                                 
+                                                    }
+                                                }
+                                                if (balance-transferringAmount > 0) {
+                                                    bad.updateAccountBalance(accountId,balance-transferringAmount);
+                                                    bad.addTransactionRecord(accountId,transferringAmount);
+                                                    bad.updateAccountBalance(transferringAccountId,existingBalance+transferringAmount);
+                                                    bad.addTransactionRecord(transferringAccountId,transferringAmount);                                                                
+                                                    System.out.println(fmt.format(transferringAmount)+" has been transferred from your account "+accountId+" to account "+transferringAccountId);
+                                                    
+                                                    isTransferring = false;
+                                                } else {
+                                                    System.out.println("Please enter amount less than the balance");
+                                                    userInputToTransfer = sc.nextLine();
+                                                }
+                                            } else {
+                                                System.out.println("Please enter amount greater than 0:");
+                                                userInputToTransfer = sc.nextLine();
+                                            }
+                                        } catch (NumberFormatException e) {
+                                            System.out.println("Please enter numbers ONLY: ");
+                                            userInputToTransfer = sc.nextLine();
+                                        }
+                                        
+                                    }
+                                    
+
+                                    transacting = false;
+                                    isEmployeeTasking = false;
+                                } else if (userInput.equals("4")) {
+                                    System.out.print("Exiting out of the System");
+                                    isEmployeeTasking = false;
+                                    transacting = false;
+                                } else {
+                                    System.out.println("Please enter 1, 2, 3 or 4 ONLY!");
+                                    userInput = sc.nextLine();
+                                }
+                            }
+                        } else if(userInput.equals("2")) {
+                            // Approve or denying
+                            isEmployeeTasking = false;
+                        } else if(userInput.equals("3")) {
+                            System.out.println("Bye");
+                            isEmployeeTasking = false;
+                        } else {
+                            System.out.println("Please enter 1, 2 or 3 ONLY!");
+                            userInput = sc.nextLine();
+                        }
+                    }
                 
+                } else {
+                    System.out.println("Sorry but the system could not verify you as an employee");
+                    System.out.println("Please go see the manager");
+                }
+
                 checkingUser = false;
             } else if (userInput.equals("3")) {
                 System.out.println("Your coffee and breakfast is on its way...");
                 checkingUser = false;
             } else {
-                System.out.println("Are you testing my patience... type in 1, 2 or 3 ONLY!");
+                System.out.println("Please select 1, 2 or 3");
                 userInput = sc.nextLine();
             }
         }
 
-
         sc.close();
-
 	}
 }
