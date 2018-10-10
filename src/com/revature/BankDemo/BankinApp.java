@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.text.NumberFormat;
 
+import com.revature.BankDemo.model.BankUsersAccount;
 import com.revature.BankDemo.model.BankAccounts;
 import com.revature.BankDemo.model.BankUsers;
 import com.revature.BankDemo.repository.BankAppDao;
@@ -31,6 +32,7 @@ public class BankinApp {
         BankAppDao bad = new BankAppDao();
         List<BankUsers> buList = bad.getBankUsersSp();
         List<BankAccounts> baList = bad.getBankAccounts();
+        List<BankUsersAccount> buaList = bad.getBankUsersAccount();
    
         NumberFormat fmt = NumberFormat.getCurrencyInstance();
         
@@ -51,10 +53,12 @@ public class BankinApp {
         while (checkingUser) {
             if (userInput.equals("1")) {
                 System.out.println("Welcome Customer...");
+                System.out.println();
 
                 // Customer screen view
                 System.out.println("Select 1 to log in or 2 to register: ");
                 userInput = sc.nextLine();
+                System.out.println();
                 
                 boolean isloggingIn = true;
                 while (isloggingIn) {
@@ -70,7 +74,6 @@ public class BankinApp {
                                 isUsername = true;
                                 username = bu.getUserName();
                                 userId = bu.getId();                                
-
                                 break; // proceed to password check
                             }         
                         }
@@ -82,10 +85,7 @@ public class BankinApp {
                             userInput = sc.nextLine();
                             for (BankUsers bu: buList) {
                                 if (userInput.equals(bu.getPassword())) {
-                                    isPassword = true; 
-                                    //userId = bu.getId();
-                                    //username = bu.getUserName();
-
+                                    isPassword = true;                 
                                     break; // password verified proceed to the next step
                                 }         
                             }
@@ -247,9 +247,18 @@ public class BankinApp {
                                             }
                                             
                                             isViewingAccount = false;
-                                        } else if (userInput.equals("2")) {
+                                        } else if (userInput.equals("2")) { // creating joint accounts
                                             System.out.println();
-                                            System.out.println("Joint Account");
+                                            System.out.println("To create Joint Account, first, enter account id: ");
+                                            int existingAccountId = Integer.parseInt(sc.nextLine());
+                                            System.out.println();
+                                            System.out.println("Next, enter user id from another account: ");
+                                            int eonUserId = Integer.parseInt(sc.nextLine());
+                                            System.out.println();
+
+                                            bad.createUserAccount(eonUserId, existingAccountId);
+                                            System.out.println("Joint account created");
+
                                             isViewingAccount = false;
                                         } else {
                                             System.out.println("Please press 1 or 2 only: ");
@@ -257,9 +266,8 @@ public class BankinApp {
                                         }
                                     }
     
-                                } else {
-                                    System.out.println("New User do this...");
-                                    // add more stuff here
+                                } else { // handling new user
+                                    System.out.println();
                                     System.out.println("Welcome back "+username+":");
                                     System.out.println("Would you like to open a new account:");
                                     System.out.println();
@@ -309,6 +317,7 @@ public class BankinApp {
                                     System.out.println("Thank you for submitting an application.");
                                     System.out.println("Your application is being processed.");
                                     System.out.println("It may take up to 3 to 5 business days.");
+                                    System.out.println();
                                 }
                                                              
                             } else {

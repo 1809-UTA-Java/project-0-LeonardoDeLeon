@@ -6,9 +6,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.revature.BankDemo.model.BankUsersAccount;
 import com.revature.BankDemo.model.BankAccounts;
 import com.revature.BankDemo.model.BankUsers;
 import com.revature.BankDemo.util.DbConnUtil;
@@ -195,6 +197,38 @@ public class BankAppDao {
 			ex.printStackTrace();
 		}
 	}	
+
+	public List<BankUsersAccount> getBankUsersAccount() {
+		CallableStatement cs = null;
+		
+		BankUsersAccount bua = null;
+		List<BankUsersAccount> bankUsersAccount = new ArrayList<>();
+
+		try(Connection conn = DbConnUtil.getDbConnect()) {
+			String sql = "{ CALL GET_ALL_FROM_USERS_ACCOUNT_SP(?) }";
+			cs = conn.prepareCall(sql);
+			cs.registerOutParameter(1, OracleTypes.CURSOR);
+			
+			cs.execute();
+			
+			ResultSet rs = (ResultSet) cs.getObject(1);
+			while(rs.next()) {
+				int uid = rs.getInt("user_id");
+				int aid = rs.getInt("account_id");
+				Timestamp userAcctCreationTs = rs.getTimestamp("user_acct_creation_t_s");
+				
+				bua = new BankUsersAccount(uid, aid, userAcctCreationTs);
+				bankUsersAccount.add(bua);
+			}
+			
+			cs.close();
+			rs.close();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+		return bankUsersAccount;
+	}
 	public static void main (String [] args) {
 		BankAppDao bad = new BankAppDao();
 		bad.registerNewUser("newUser","newPasword");
