@@ -253,11 +253,28 @@ public class BankinApp {
                                             int existingAccountId = Integer.parseInt(sc.nextLine());
                                             System.out.println();
                                             System.out.println("Next, enter user id from another account: ");
-                                            int eonUserId = Integer.parseInt(sc.nextLine());
+                                            int eoaaUserId = Integer.parseInt(sc.nextLine());
                                             System.out.println();
-// add the users_account checker here
-                                            bad.createUserAccount(eonUserId, existingAccountId);
-                                            System.out.println("Joint account created");
+                                            
+                                            // add the users_account checker here
+                                            boolean isAcctId = false;
+                                            boolean isUserId = false;
+                                            for (BankUsersAccount bua: buaList) {
+                                                if (existingAccountId == bua.getAccountId()) {
+                                                    isAcctId = true;
+                                                    if (eoaaUserId == bua.getId()) {
+                                                        isUserId = true;
+                                                        break;
+                                                    }
+                                                }         
+                                            }
+                                            if (!(isAcctId && isUserId)) {
+                                                // create the joint account if it doesn't exist
+                                                bad.createUserAccount(eoaaUserId, existingAccountId);
+                                                System.out.println("Joint account created");
+                                            } else {
+                                                System.out.println("Joint account already exist");
+                                            }
 
                                             isViewingAccount = false;
                                         } else {
