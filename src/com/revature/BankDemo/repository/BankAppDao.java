@@ -259,8 +259,8 @@ public class BankAppDao {
 			ex.printStackTrace();
 		}
 	}
-	public static void main (String [] args) {
-		BankAppDao bad = new BankAppDao();
-		bad.registerNewUser("newUser","newPasword");
-	}
+//	public static void main (String [] args) {
+//		BankAppDao bad = new BankAppDao();
+//		bad.registerNewUser("newUser","newPasword");
+//	}
 }

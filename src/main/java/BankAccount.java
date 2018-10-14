@@ -7,18 +7,24 @@ public class BankAccount implements Account {
 	private int current;
 	
 	public boolean deposit(double amt) {
-		double balance = 0;
+		double balance = current;
 		balance += amt;
 
 		
         return ((balance == current + amt) ? true : false); 
 	}
 	
-	public void withdraw() {
-		System.out.println("withdrawing");
+	public boolean withdraw(double amt) {
+		double balance = current;
+		if ((balance -= amt) >= 1) {
+			return (balance == current - amt);
+		} else {
+			return false;
+		}		
 	}
 
-	public void transfer() {
-		System.out.println("transferring");
+	public boolean transfer(double amt) {
+		
+		return true;
 	}
 }

@@ -10,19 +10,34 @@ public class BankAccountTest {
 	@Test
 	public void testDeposit() {
 		//replace fail with
-		Assert.assertEquals("normal positive test",testAccount.deposit(50),true);
+		Assert.assertEquals("normal positive value test",testAccount.deposit(50),true);
 	}
 	
     @Test
     public void testDepositWithNegative() {
         //replace fail with
-        Assert.assertEquals("for negative values",testAccount.deposit(-50),true);  // fail with negative numbers
+        Assert.assertEquals("for negative values",testAccount.deposit(-50),true);
     }
+    
     @Test(expected = NullPointerException.class)
     public void testDepositNullAmt() {
-        Assert.assertEquals(testAccount.deposit(0),true);  // expect it to fail 
-    
+        Assert.assertEquals(testAccount.deposit(0),true);  // expect it to fail     
     }
-//	
+    
+    @Test
+    public void testWithdrawal() {
+    	Assert.assertEquals("normal positive  value test",testAccount.deposit(50),true);
+    }
 
+    @Test
+    public void testWithdrawalWithNegative() {
+        //replace fail with
+        Assert.assertEquals("for negative values",testAccount.deposit(-50),true);
+    }
+    
+    @Test(expected = NullPointerException.class)
+    public void testWithdrawalNullAmt() {
+        Assert.assertEquals(testAccount.deposit(0),true);  // expect it to fail     
+    }    
+  
 }
