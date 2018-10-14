@@ -85,6 +85,7 @@ public class BankinApp {
                             userInput = sc.nextLine();
                             for (BankUsers bu: buList) {
                                 if (userInput.equals(bu.getPassword())) {
+               
                                     isPassword = true;                 
                                     break; // password verified proceed to the next step
                                 }         
@@ -96,8 +97,7 @@ public class BankinApp {
                               
                                 boolean isNewUser = true;
                                 for (BankAccounts ba: baList) {
-                                    if (userId == ba.getUserId()) {
-                                        System.out.println("It's not new");
+                                    if (userId == ba.getUserId()) {                    
                                         isNewUser = false;
                                         break;
                                     }
@@ -255,7 +255,7 @@ public class BankinApp {
                                             System.out.println("Next, enter user id from another account: ");
                                             int eoaaUserId = Integer.parseInt(sc.nextLine());
                                             System.out.println();
-                                            
+
                                             // add the users_account checker here
                                             boolean isAcctId = false;
                                             boolean isUserId = false;
@@ -688,7 +688,7 @@ public class BankinApp {
 
                 checkingUser = false;
             } else if (userInput.equals("3")) {
-                System.out.println("Your coffee and breakfast is on its way...");
+                //System.out.println("Your coffee and breakfast is on its way...");
 
                 System.out.println("Galaxy Bank Employee System.  Please enter username to begin: ");
                 String employeeUsername = sc.nextLine();
